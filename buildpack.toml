@@ -12,28 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-api = "0.4"
+api = "0.6"
 
 [buildpack]
 id       = "paketo-buildpacks/pipeline-builder-canary"
-name     = "Paketo <NAME> Buildpack"
+name     = "Paketo Pipeline Builder Canary Buildpack"
 version  = "{{.version}}"
 homepage = "https://github.com/paketo-buildpacks/pipeline-builder-canary"
 
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"
-
-# [[metadata.dependencies]]
-# id      = ""
-# name    = ""
-# version = ""
-# uri     = ""
-# sha256  = ""
-# stacks  = [ "io.buildpacks.stacks.bionic" ]
-
-#   [[metadata.dependencies.licenses]]
-#   type = "<TYPE>"
-#   uri  = "<URI>"
 
 [metadata]
 pre-package   = "scripts/build.sh"
