@@ -19,6 +19,12 @@ id       = "paketo-buildpacks/pipeline-builder-canary"
 name     = "Paketo Pipeline Builder Canary Buildpack"
 version  = "{{.version}}"
 homepage = "https://github.com/paketo-buildpacks/pipeline-builder-canary"
+description = "A Cloud Native Buildpack that provides/does nothing. For testing only."
+keywords    = ["nothing"]
+
+[[buildpack.licenses]]
+type = "Apache-2.0"
+uri  = "https://github.com/paketo-buildpacks/pipeline-builder-canary/blob/main/LICENSE"
 
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"
