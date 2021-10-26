@@ -35,6 +35,20 @@ id = "io.paketo.stacks.tiny"
 [[stacks]]
 id = "*"
 
+  [[metadata.dependencies]]
+    id = "tomcat-lifecycle-support"
+    name = "Tomcat Lifecycle Support"
+    sha256 = "b725f4cae0be4a999a08ed978b29081edfd68a187a926ed740cc1f8e9aca70ce"
+    source = "https://github.com/cloudfoundry/java-buildpack-support/archive/refs/tags/v3.3.0.RELEASE.tar.gz"
+    source_sha256 = "7f6b31ffe29706199c84f4f3c12f6ec2aca12505ed06bcd7a30361412e2b46d5"
+    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    uri = "https://java-buildpack.cloudfoundry.org/tomcat-lifecycle-support/tomcat-lifecycle-support-3.3.0-RELEASE.jar"
+    version = "3.3.0_RELEASE"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2.0"
+      uri = "https://github.com/rust-lang/rust/blob/master/LICENSE-APACHE"
+
 [metadata]
 pre-package   = "scripts/build.sh"
 include-files = [
