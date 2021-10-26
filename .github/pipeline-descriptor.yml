@@ -17,7 +17,11 @@ docker_credentials:
     password: ${{ secrets.JAVA_GCLOUD_SERVICE_ACCOUNT_KEY }}
 
 dependencies:
-- id:   tomcat-lifecycle-support
-  uses: docker://ghcr.io/paketo-buildpacks/actions/cf-java-index-dependency:main
+- id:   maven
+  uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
   with:
-    repository_root: https://java-buildpack.cloudfoundry.org/tomcat-lifecycle-support
+    uri:         https://repo1.maven.org/maven2
+    group_id:    org.apache.maven
+    artifact_id: apache-maven
+    classifier:  bin
+    packaging:   tar.gz
