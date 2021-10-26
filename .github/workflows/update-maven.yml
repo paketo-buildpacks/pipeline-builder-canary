@@ -1,4 +1,4 @@
-name: Update tomcat-lifecycle-support
+name: Update maven
 "on":
     schedule:
         - cron: 0 5 * * 1-5
@@ -42,9 +42,13 @@ jobs:
                 YJ_VERSION: 5.0.0
             - uses: actions/checkout@v2
             - id: dependency
-              uses: docker://ghcr.io/paketo-buildpacks/actions/cf-java-index-dependency:main
+              uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
               with:
-                repository_root: https://java-buildpack.cloudfoundry.org/tomcat-lifecycle-support
+                artifact_id: apache-maven
+                classifier: bin
+                group_id: org.apache.maven
+                packaging: tar.gz
+                uri: https://repo1.maven.org/maven2
             - name: Update Buildpack Dependency
               id: buildpack
               run: |-
@@ -81,7 +85,7 @@ jobs:
                 echo "::set-output name=new-version::${VERSION}"
                 echo "::set-output name=version-label::${LABEL}"
               env:
-                ID: tomcat-lifecycle-support
+                ID: maven
                 SHA256: ${{ steps.dependency.outputs.sha256 }}
                 URI: ${{ steps.dependency.outputs.uri }}
                 VERSION: ${{ steps.dependency.outputs.version }}
@@ -89,14 +93,14 @@ jobs:
             - uses: peter-evans/create-pull-request@v3
               with:
                 author: ${{ secrets.JAVA_GITHUB_USERNAME }} <${{ secrets.JAVA_GITHUB_USERNAME }}@users.noreply.github.com>
-                body: Bumps `tomcat-lifecycle-support` from `${{ steps.buildpack.outputs.old-version }}` to `${{ steps.buildpack.outputs.new-version }}`.
-                branch: update/buildpack/tomcat-lifecycle-support
+                body: Bumps `maven` from `${{ steps.buildpack.outputs.old-version }}` to `${{ steps.buildpack.outputs.new-version }}`.
+                branch: update/buildpack/maven
                 commit-message: |-
-                    Bump tomcat-lifecycle-support from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
+                    Bump maven from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
 
-                    Bumps tomcat-lifecycle-support from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}.
+                    Bumps maven from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}.
                 delete-branch: true
                 labels: ${{ steps.buildpack.outputs.version-label }}, type:dependency-upgrade
                 signoff: true
-                title: Bump tomcat-lifecycle-support from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
+                title: Bump maven from ${{ steps.buildpack.outputs.old-version }} to ${{ steps.buildpack.outputs.new-version }}
                 token: ${{ secrets.JAVA_GITHUB_TOKEN }}
