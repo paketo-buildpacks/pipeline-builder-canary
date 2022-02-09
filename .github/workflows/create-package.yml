@@ -136,6 +136,7 @@ jobs:
               env:
                 INCLUDE_DEPENDENCIES: "false"
                 OS: linux
+                SOURCE_PATH: ""
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Package Buildpack
               id: package
