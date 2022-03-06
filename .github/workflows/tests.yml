@@ -50,7 +50,7 @@ jobs:
 
                 mkdir -p "${HOME}"/.pack
                 echo "experimental = true" >> "${HOME}"/.pack/config.toml
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
             - uses: actions/cache@v2
               with:
                 key: ${{ runner.os }}-go-${{ hashFiles('**/buildpack.toml', '**/package.toml') }}
@@ -112,29 +112,34 @@ jobs:
                 OS: linux
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Package Buildpack
-              run: |
+              run: |+
                 #!/usr/bin/env bash
 
                 set -euo pipefail
 
+                 REPOSITORY="${GITHUB_REPOSITORY_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/buildpack' to 'paketobuildpacks/buildpack'
+                 IMAGE="index.docker.io/${REPOSITORY}"
+
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${IMAGE}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MINOR}"
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MAJOR}"
+                    crane tag "${IMAGE}:${VERSION}" "${VERSION_MINOR}"
+                    crane tag "${IMAGE}:${VERSION}" "${VERSION_MAJOR}"
                   fi
-                  crane tag "${PACKAGE}:${VERSION}" latest
-                  echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
+                  crane tag "${IMAGE}:${VERSION}" latest
+                  crane copy "${IMAGE}:${VERSION}" "gcr.io/${{ github.repository }}:${VERSION}"
+                  echo "::set-output name=digest::$(crane digest "${IMAGE}:${VERSION}")"
                 else
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${IMAGE}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
+
               env:
                 FORMAT: image
                 PACKAGE: test
@@ -144,7 +149,7 @@ jobs:
         runs-on:
             - ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
             - uses: actions/cache@v2
               with:
                 key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
