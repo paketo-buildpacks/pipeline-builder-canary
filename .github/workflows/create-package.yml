@@ -147,31 +147,36 @@ jobs:
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Package Buildpack
               id: package
-              run: |
+              run: |-
                 #!/usr/bin/env bash
 
                 set -euo pipefail
 
+                PACKAGES=(${PACKAGE//,/ })
+
+                for P in $PACKAGES
+                do
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MINOR}"
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MAJOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MINOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MAJOR}"
                   fi
-                  crane tag "${PACKAGE}:${VERSION}" latest
-                  echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
+                  crane tag "${P}:${VERSION}" latest
+                  echo "::set-output name=digest::$(crane digest "${P}:${VERSION}")"
                 else
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
+                done
               env:
-                PACKAGE: gcr.io/paketo-buildpacks/pipeline-builder-canary
+                PACKAGES: gcr.io/paketo-buildpacks/pipeline-builder-canary,index.docker.io/paketobuildpacks/pipeline-builder-canary
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
                 VERSION_MAJOR: ${{ steps.version.outputs.version-major }}

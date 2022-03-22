@@ -10,6 +10,20 @@ jobs:
         runs-on:
             - ubuntu-latest
         steps:
+            - name: Docker login gcr.io
+              if: ${{ (github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork) && (github.actor != 'dependabot[bot]') }}
+              uses: docker/login-action@v1
+              with:
+                password: ${{ secrets.JAVA_GCLOUD_SERVICE_ACCOUNT_KEY }}
+                registry: gcr.io
+                username: _json_key
+            - name: Docker login docker.io
+              if: ${{ (github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork) && (github.actor != 'dependabot[bot]') }}
+              uses: docker/login-action@v1
+              with:
+                password: ${{ secrets.PAKETO_BUILDPACKS_DOCKERHUB_PASSWORD }}
+                registry: docker.io
+                username: ${{ secrets.PAKETO_BUILDPACKS_DOCKERHUB_USERNAME }}
             - uses: actions/setup-go@v2
               with:
                 go-version: "1.17"
@@ -112,29 +126,34 @@ jobs:
                 OS: linux
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Package Buildpack
-              run: |
+              run: |-
                 #!/usr/bin/env bash
 
                 set -euo pipefail
 
+                PACKAGES=(${PACKAGE//,/ })
+
+                for P in $PACKAGES
+                do
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MINOR}"
-                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MAJOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MINOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MAJOR}"
                   fi
-                  crane tag "${PACKAGE}:${VERSION}" latest
-                  echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
+                  crane tag "${P}:${VERSION}" latest
+                  echo "::set-output name=digest::$(crane digest "${P}:${VERSION}")"
                 else
                   pack buildpack package \
-                    "${PACKAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
+                done
               env:
                 FORMAT: image
                 PACKAGE: test
