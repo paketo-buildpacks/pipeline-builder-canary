@@ -147,36 +147,36 @@ jobs:
                 VERSION: ${{ steps.version.outputs.version }}
             - name: Package Buildpack
               id: package
-              run: |+
+              run: |-
                 #!/usr/bin/env bash
 
                 set -euo pipefail
 
-                 REPOSITORY="${GITHUB_REPOSITORY_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/buildpack' to 'paketobuildpacks/buildpack'
-                 IMAGE="index.docker.io/${REPOSITORY}"
+                PACKAGES=(${PACKAGE//,/ })
 
+                for P in $PACKAGES
+                do
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
                   pack buildpack package \
-                    "${IMAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
-                    crane tag "${IMAGE}:${VERSION}" "${VERSION_MINOR}"
-                    crane tag "${IMAGE}:${VERSION}" "${VERSION_MAJOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MINOR}"
+                    crane tag "${P}:${VERSION}" "${VERSION_MAJOR}"
                   fi
-                  crane tag "${IMAGE}:${VERSION}" latest
-                  crane copy "${IMAGE}:${VERSION}" "gcr.io/${{ github.repository }}:${VERSION}"
-                  echo "::set-output name=digest::$(crane digest "${IMAGE}:${VERSION}")"
+                  crane tag "${P}:${VERSION}" latest
+                  echo "::set-output name=digest::$(crane digest "${P}:${VERSION}")"
                 else
                   pack buildpack package \
-                    "${IMAGE}:${VERSION}" \
+                    "${P}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
-
+                done
               env:
-                PACKAGE: gcr.io/paketo-buildpacks/pipeline-builder-canary
+                PACKAGES: gcr.io/paketo-buildpacks/pipeline-builder-canary,index.docker.io/paketobuildpacks/pipeline-builder-canary
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
                 VERSION_MAJOR: ${{ steps.version.outputs.version-major }}
