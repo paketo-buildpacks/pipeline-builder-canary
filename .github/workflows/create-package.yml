@@ -170,12 +170,13 @@ jobs:
                   crane tag "${PACKAGE}:${VERSION}" latest
                   echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
 
-                  for P in $PACKAGE_LIST
-                  do
-                    if [ "$P" != "$PACKAGE" ]; then
-                      crane copy "${PACKAGE}:${VERSION}" "${P}:${VERSION}"
-                    fi
-                  done
+                  # copy to other repositories specified
+                  for P in "${PACKAGE_LIST[@]}"
+                    do
+                      if [ "$P" != "$PACKAGE" ]; then
+                        crane copy "${PACKAGE}:${VERSION}" "${P}:${VERSION}"
+                      fi
+                    done
                 else
                   pack buildpack package \
                     "${PACKAGE}:${VERSION}" \
