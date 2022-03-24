@@ -156,7 +156,6 @@ jobs:
                         crane copy "${PACKAGE}:${VERSION}" "${P}:${VERSION}"
                       fi
                     done
-
                 else
                   pack buildpack package \
                     "${PACKAGE}:${VERSION}" \
