@@ -152,31 +152,40 @@ jobs:
 
                 set -euo pipefail
 
-                PACKAGES=(${PACKAGE//,/ })
 
-                for P in $PACKAGES
-                do
+                PACKAGE_LIST=($PACKAGES)
+                # Extract first repo (Docker Hub) as the main to package & register
+                PACKAGE=${PACKAGE_LIST[0]}
+
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
                   pack buildpack package \
-                    "${P}:${VERSION}" \
+                    "${PACKAGE}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
-                    crane tag "${P}:${VERSION}" "${VERSION_MINOR}"
-                    crane tag "${P}:${VERSION}" "${VERSION_MAJOR}"
+                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MINOR}"
+                    crane tag "${PACKAGE}:${VERSION}" "${VERSION_MAJOR}"
                   fi
-                  crane tag "${P}:${VERSION}" latest
-                  echo "::set-output name=digest::$(crane digest "${P}:${VERSION}")"
+                  crane tag "${PACKAGE}:${VERSION}" latest
+                  echo "::set-output name=digest::$(crane digest "${PACKAGE}:${VERSION}")"
+
+                  # copy to other repositories specified
+                  for P in "${PACKAGE_LIST[@]}"
+                    do
+                      if [ "$P" != "$PACKAGE" ]; then
+                        crane copy "${PACKAGE}:${VERSION}" "${P}:${VERSION}"
+                      fi
+                    done
+
                 else
                   pack buildpack package \
-                    "${P}:${VERSION}" \
+                    "${PACKAGE}:${VERSION}" \
                     --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
-                done
               env:
-                PACKAGES: gcr.io/paketo-buildpacks/pipeline-builder-canary,index.docker.io/paketobuildpacks/pipeline-builder-canary
+                PACKAGES: index.docker.io/paketobuildpacks/pipeline-builder-canary gcr.io/paketo-buildpacks/pipeline-builder-canary
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
                 VERSION_MAJOR: ${{ steps.version.outputs.version-major }}
@@ -206,7 +215,7 @@ jobs:
             - if: ${{ true }}
               uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:4.0.1
               with:
-                address: gcr.io/paketo-buildpacks/pipeline-builder-canary@${{ steps.package.outputs.digest }}
+                address: index.docker.io/paketobuildpacks/pipeline-builder-canary@${{ steps.package.outputs.digest }}
                 id: paketo-buildpacks/pipeline-builder-canary
                 token: ${{ secrets.JAVA_GITHUB_TOKEN }}
                 version: ${{ steps.version.outputs.version }}
