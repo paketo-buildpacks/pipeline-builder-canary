@@ -175,6 +175,11 @@ jobs:
                     do
                       if [ "$P" != "$PACKAGE" ]; then
                         crane copy "${PACKAGE}:${VERSION}" "${P}:${VERSION}"
+                        if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
+                           crane tag "${P}:${VERSION}" "${VERSION_MINOR}"
+                           crane tag "${P}:${VERSION}" "${VERSION_MAJOR}"
+                        fi
+                        crane tag "${P}:${VERSION}" latest
                       fi
                     done
                 else
