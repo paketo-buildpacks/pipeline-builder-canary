@@ -36,7 +36,7 @@ jobs:
                 YJ_VERSION: 5.0.0
             - uses: actions/checkout@v3
             - name: Update draft release with buildpack information
-              uses: ghcr.io/paketo-buildpacks/actions/draft-release
+              uses: paketo-buildpacks/actions/draft-release@latest
               with:
                 github_token: ${{ secrets.JAVA_GITHUB_TOKEN }}
                 release_body: ${{ steps.release-drafter.outputs.body }}
