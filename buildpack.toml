@@ -19,7 +19,7 @@ api = "0.7"
   homepage = "https://github.com/paketo-buildpacks/pipeline-builder-canary"
   id = "paketo-buildpacks/pipeline-builder-canary"
   keywords = ["nothing"]
-  name = "Paketo Pipeline Builder Canary Buildpack"
+  name = "Paketo Buildpack for Pipeline Builder Canary"
   version = "{{.version}}"
 
   [[buildpack.licenses]]
