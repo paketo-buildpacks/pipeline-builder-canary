@@ -1,6 +1,6 @@
 # `gcr.io/paketo-buildpacks/pipeline-builder-canary`
 
-The Paketo Pipeline Build Canary Buildpack is a Cloud Native Buildpack that does nothing. It's primary purpose is to function as a validation for changes being made to the pipeline-builder.
+The Paketo Pipeline Builder Canary Buildpack is a Cloud Native Buildpack that does nothing. It's primary purpose is to function as a validation for changes being made to the pipeline-builder.
 
 ## Behavior
 
