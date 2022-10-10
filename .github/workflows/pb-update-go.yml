@@ -13,7 +13,7 @@ jobs:
               with:
                 go-version: "1.18"
             - uses: actions/checkout@v3
-            - name: Update Go Version & Modules
+            - name: Update Go Version
               id: update-go
               run: |
                 #!/usr/bin/env bash
@@ -35,26 +35,15 @@ jobs:
                 git add go.mod go.sum
                 git checkout -- .
 
-                if [ "$OLD_GO_VERSION" == "$GO_VERSION" ]; then
-                    COMMIT_TITLE="Bump Go Modules"
-                    COMMIT_BODY="Bumps Go modules used by the project. See the commit for details on what modules were updated."
-                    COMMIT_SEMVER="semver:patch"
-                else
-                    COMMIT_TITLE="Bump Go from ${OLD_GO_VERSION} to ${GO_VERSION}"
-                    COMMIT_BODY="Bumps Go from ${OLD_GO_VERSION} to ${GO_VERSION} and update Go modules used by the project. See the commit for details on what modules were updated."
-                    COMMIT_SEMVER="semver:minor"
-                fi
-
-                echo "::set-output name=commit-title::${COMMIT_TITLE}"
-                echo "::set-output name=commit-body::${COMMIT_BODY}"
-                echo "::set-output name=commit-semver::${COMMIT_SEMVER}"
+                echo "::set-output name=old-go-version::${OLD_GO_VERSION}"
+                echo "::set-output name=go-version::${GO_VERSION}"
               env:
                 GO_VERSION: "1.18"
             - uses: peter-evans/create-pull-request@v4
               with:
                 author: ${{ secrets.JAVA_GITHUB_USERNAME }} <${{ secrets.JAVA_GITHUB_USERNAME }}@users.noreply.github.com>
                 body: |-
-                    ${{ steps.update-go.outputs.commit-body }}
+                    Bumps Go from `${{ steps.update-go.outputs.old-go-version }}` to `${{ steps.update-go.outputs.go-version }}`.
 
                     <details>
                     <summary>Release Notes</summary>
@@ -62,11 +51,11 @@ jobs:
                     </details>
                 branch: update/go
                 commit-message: |-
-                    ${{ steps.update-go.outputs.commit-title }}
+                    Bump Go from ${{ steps.update-go.outputs.old-go-version }} to ${{ steps.update-go.outputs.go-version }}
 
-                    ${{ steps.update-go.outputs.commit-body }}
+                    Bumps Go from ${{ steps.update-go.outputs.old-go-version }} to ${{ steps.update-go.outputs.go-version }}.
                 delete-branch: true
-                labels: ${{ steps.update-go.outputs.commit-semver }}, type:task
+                labels: semver:minor, type:task
                 signoff: true
-                title: ${{ steps.update-go.outputs.commit-title }}
+                title: Bump Go from ${{ steps.update-go.outputs.old-go-version }} to ${{ steps.update-go.outputs.go-version }}
                 token: ${{ secrets.JAVA_GITHUB_TOKEN }}
