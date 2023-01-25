@@ -69,4 +69,4 @@ jobs:
                 labels: ${{ steps.update-go.outputs.commit-semver }}, type:task
                 signoff: true
                 title: ${{ steps.update-go.outputs.commit-title }}
-                token: ${{ secrets.JAVA_GITHUB_TOKEN }}
+                token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
