@@ -13,7 +13,7 @@ jobs:
               if: ${{ (github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork) && (github.actor != 'dependabot[bot]') }}
               uses: docker/login-action@v2
               with:
-                password: ${{ secrets.JAVA_GCLOUD_SERVICE_ACCOUNT_KEY }}
+                password: ${{ secrets.GCR_PUSH_BOT_JSON_KEY }}
                 registry: gcr.io
                 username: _json_key
             - name: Docker login docker.io
@@ -195,7 +195,7 @@ jobs:
                     --format "${FORMAT}"
                 fi
               env:
-                PACKAGES: index.docker.io/paketobuildpacks/pipeline-builder-canary gcr.io/paketo-buildpacks/pipeline-builder-canary
+                PACKAGES: docker.io/paketobuildpacks/pipeline-builder-canary gcr.io/paketo-buildpacks/pipeline-builder-canary
                 PUBLISH: "true"
                 VERSION: ${{ steps.version.outputs.version }}
                 VERSION_MAJOR: ${{ steps.version.outputs.version-major }}
@@ -221,11 +221,11 @@ jobs:
                   --field "body=${RELEASE_BODY//<!-- DIGEST PLACEHOLDER -->/\`${DIGEST}\`}"
               env:
                 DIGEST: ${{ steps.package.outputs.digest }}
-                GITHUB_TOKEN: ${{ secrets.JAVA_GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
             - if: ${{ true }}
               uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:4.0.1
               with:
-                address: index.docker.io/paketobuildpacks/pipeline-builder-canary@${{ steps.package.outputs.digest }}
+                address: docker.io/paketobuildpacks/pipeline-builder-canary@${{ steps.package.outputs.digest }}
                 id: paketo-buildpacks/pipeline-builder-canary
-                token: ${{ secrets.JAVA_GITHUB_TOKEN }}
+                token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
                 version: ${{ steps.version.outputs.version }}
