@@ -31,14 +31,14 @@ api = "0.7"
   pre-package = "scripts/build.sh"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:maven:3.9.1:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:maven:3.9.2:*:*:*:*:*:*:*"]
     id = "maven"
     name = "Apache Maven"
-    purl = "pkg:generic/apache-maven@3.9.1"
-    sha256 = "0869a4f71238e3eeec21051d062cfd915d34abe905c9bfebf94cd34578db0be7"
+    purl = "pkg:generic/apache-maven@3.9.2"
+    sha256 = "809ef3220c6d179195c06c324cb9a6d34d8ecba566c5cfd8eb83167bc034117d"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.9.1/apache-maven-3.9.1-bin.tar.gz"
-    version = "3.9.1"
+    uri = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.9.2/apache-maven-3.9.2-bin.tar.gz"
+    version = "3.9.2"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
