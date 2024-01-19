@@ -9,7 +9,7 @@ jobs:
         runs-on:
             - ubuntu-latest
         steps:
-            - uses: actions/setup-go@v5
+            - uses: actions/setup-go@v4
               with:
                 go-version: "1.20"
             - name: Install update-buildpack-dependency
@@ -39,8 +39,8 @@ jobs:
 
                 chmod +x "${HOME}"/bin/yj
               env:
-                YJ_VERSION: 5.1.0
-            - uses: actions/checkout@v4
+                YJ_VERSION: 5.0.0
+            - uses: actions/checkout@v3
             - id: dependency
               uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
               with:
@@ -57,7 +57,7 @@ jobs:
                 set -euo pipefail
 
                 OLD_VERSION=$(yj -tj < buildpack.toml | \
-                  jq -r ".metadata.dependencies[] | select( .id == env.ID ) | select( .version | test( env.VERSION_PATTERN ) ) | select( .purl | contains( env.ARCH ) ) | .version")
+                  jq -r ".metadata.dependencies[] | select( .id == env.ID ) | select( .version | test( env.VERSION_PATTERN ) ) | select( .purl | contains( env.ARCH ) )")
 
                 update-buildpack-dependency \
                   --buildpack-toml buildpack.toml \
