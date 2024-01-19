@@ -9,7 +9,7 @@ jobs:
         runs-on:
             - ubuntu-latest
         steps:
-            - uses: actions/setup-go@v4
+            - uses: actions/setup-go@v5
               with:
                 go-version: "1.20"
             - name: Install update-buildpack-dependency
@@ -39,8 +39,8 @@ jobs:
 
                 chmod +x "${HOME}"/bin/yj
               env:
-                YJ_VERSION: 5.0.0
-            - uses: actions/checkout@v3
+                YJ_VERSION: 5.1.0
+            - uses: actions/checkout@v4
             - id: dependency
               uses: docker://ghcr.io/paketo-buildpacks/actions/maven-dependency:main
               with:
