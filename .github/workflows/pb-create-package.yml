@@ -37,20 +37,9 @@ jobs:
               with:
                 crane-version: 0.19.0
                 yj-version: 5.1.0
-            - name: Install pack
-              run: |
-                #!/usr/bin/env bash
-                # this is coming from a copy of https://github.com/buildpacks/pack/actions/runs/8118576298 stored on box
-                # TODO to revisit when the official one is out
-                set -euo pipefail
-
-                echo "Installing pack experimental"
-
-                mkdir -p "${HOME}"/bin
-                echo "${HOME}/bin" >> "${GITHUB_PATH}"
-
-                curl -L "https://ent.box.com/shared/static/j4d1bfe9uk1sb0i7zjvci0md9xmy41u4" -o ${HOME}/bin/pack
-                chmod +x "${HOME}"/bin/pack
+            - uses: buildpacks/github-actions/setup-pack@v5.5.3
+              with:
+                pack-version: 0.33.2
             - name: Enable pack Experimental
               if: ${{ false }}
               run: |
@@ -144,20 +133,15 @@ jobs:
 
                 set -euo pipefail
 
-                CONFIG="--config "${HOME}"/package.toml"
-                #TODO with this, we don't need to use the package.toml, because pack exp. does not support it with multi arch yet
-                if ! [ -f "${PWD}/package.toml" ]; then
-                  cd ~/buildpack
-                  CONFIG=""
-                fi
 
                 PACKAGE_LIST=($PACKAGES)
                 # Extract first repo (Docker Hub) as the main to package & register
                 PACKAGE=${PACKAGE_LIST[0]}
 
                 if [[ "${PUBLISH:-x}" == "true" ]]; then
-                  pack -v buildpack package \
-                    "${PACKAGE}:${VERSION}" ${CONFIG} \
+                  pack buildpack package \
+                    "${PACKAGE}:${VERSION}" \
+                    --config "${HOME}"/package.toml \
                     --publish
 
                   if [[ -n ${VERSION_MINOR:-} && -n ${VERSION_MAJOR:-} ]]; then
@@ -181,8 +165,9 @@ jobs:
                     done
 
                 else
-                  pack -v buildpack package \
-                    "${PACKAGE}:${VERSION}" ${CONFIG} \
+                  pack buildpack package \
+                    "${PACKAGE}:${VERSION}" \
+                    --config "${HOME}"/package.toml \
                     --format "${FORMAT}"
                 fi
               env:
@@ -214,7 +199,7 @@ jobs:
                 DIGEST: ${{ steps.package.outputs.digest }}
                 GITHUB_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
             - if: ${{ true }}
-              uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.5.3
+              uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:4.0.1
               with:
                 address: docker.io/paketobuildpacks/pipeline-builder-canary@${{ steps.package.outputs.digest }}
                 id: paketo-buildpacks/pipeline-builder-canary
