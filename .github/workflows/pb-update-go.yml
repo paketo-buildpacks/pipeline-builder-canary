@@ -29,6 +29,8 @@ jobs:
 
                 go mod edit -go="$GO_VERSION"
                 go mod tidy
+                go get -u -t ./...
+                go mod tidy
 
                 git add go.mod go.sum
                 git checkout -- .
