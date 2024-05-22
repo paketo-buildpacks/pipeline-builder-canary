@@ -1,19 +1,11 @@
 version: 2
 updates:
-  - package-ecosystem: gomod
-    directory: /
-    schedule:
-      interval: weekly
-    labels:
-      - semver:patch
-      - type:dependency-upgrade
-    allow:
-      - dependency-type: "all"
-    groups:
-      gomod:
-        patterns:
-          - "*"
-        # group all minor and patch dependency updates together
-        update-types:
-          - "minor"
-          - "patch"
+    - package-ecosystem: gomod
+      directory: /
+      schedule:
+        interval: daily
+      ignore:
+        - dependency-name: github.com/onsi/gomega
+      labels:
+        - semver:patch
+        - type:dependency-upgrade
