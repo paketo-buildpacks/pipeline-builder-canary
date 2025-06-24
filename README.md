@@ -1,4 +1,7 @@
-# `gcr.io/paketo-buildpacks/pipeline-builder-canary`
+# Paketo Buildpack for Pipeline Builder Canary
+
+## Buildpack ID: `paketo-buildpacks/pipeline-builder-canary`
+## Registry URLs: `docker.io/paketobuildpacks/pipeline-builder-canary`
 
 The Paketo Buildpack for Pipeline Builder Canary is a Cloud Native Buildpack that does nothing. It's primary purpose is to function as a validation for changes being made to the pipeline-builder.
 
