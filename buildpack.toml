@@ -31,16 +31,16 @@ api = "0.7"
   pre-package = "scripts/build.sh"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:apache:maven:3.9.16:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:apache:maven:3.10.2:*:*:*:*:*:*:*"]
     id = "maven"
     name = "Apache Maven"
-    purl = "pkg:generic/apache-maven@3.9.16"
-    sha256 = "80ffca22aed9e8b9713a232f3394fd81d7f20322df75efdb2b047dbd3e3a23bb"
-    source = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-src.tar.gz"
-    source-sha256 = "f7031b091ad75a226a06a0c092cbf05860dcfc16d140e6da997e6c6b62dbd03c"
+    purl = "pkg:generic/apache-maven@3.10.2"
+    sha256 = "8ba13121794243e604dbca50439f6ae649ce602675a167129556fd502947b249"
+    source = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.10.2/apache-maven-3.10.2-src.tar.gz"
+    source-sha256 = "40351e9095938b69a391ff47018530491926be9cd4692cef394c27f26c28982b"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.tar.gz"
-    version = "3.9.16"
+    uri = "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.10.2/apache-maven-3.10.2-bin.tar.gz"
+    version = "3.10.2"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2.0"
